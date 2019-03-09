@@ -1,0 +1,6 @@
+build/
+out/
+.idea/
+*.iml
+.gradle/
+src/main/resources/static/assets/css/bootstrap
