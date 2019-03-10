@@ -8,6 +8,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap/bootstrap.css">
 
+    <link rel="stylesheet" href="assets/css/main.css">
+
     <script type="text/javascript" src="assets/js/visjs/vis.js"></script>
     <link type="text/css" href="assets/css/visjs/vis.css" rel="stylesheet" />
 
@@ -15,60 +17,33 @@
 </head>
 <body>
 
-<div class="container">
-    <div class="row">
-        <div class="col-8"><h1>This is the title</h1></div>
-        <div class="col-4" id="mynetwork"></div>
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg">
 
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="float-lg-right" id="notegraph"></div>
+    <div class="row">
+        <div id="note" class="col-12">
+            <h1>This is the title</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur auctor, turpis ac mattis vehicula, est velit sollicitudin purus, aliquet varius mi urna quis ligula. Sed porttitor mauris sed lorem ultrices, sit amet eleifend eros blandit. Etiam id sapien mattis, venenatis metus non, aliquam sapien. Aliquam quam justo, aliquam at dolor at, dictum condimentum mauris. Vivamus a nisl consequat, lacinia velit vel, porta augue. Vivamus eleifend ex non sapien iaculis aliquet. Nulla enim mi, aliquet a pulvinar a, congue at nisi. Phasellus est felis, congue ac pharetra in, condimentum eu mauris. Quisque suscipit nunc vitae lacus ornare, ac ultrices lorem laoreet. Ut malesuada lacus metus, vitae efficitur neque vestibulum eget. Nulla sollicitudin cursus urna vel posuere. Etiam quis facilisis velit.</p>
+            <p>Pellentesque sed dui justo. Vestibulum nisl turpis, faucibus a lectus sed, feugiat porta arcu. Vestibulum finibus et enim at porta. Quisque accumsan vulputate leo in maximus. Proin arcu arcu, pharetra a ullamcorper non, efficitur nec purus. Donec rhoncus aliquam semper. Integer faucibus tempus nisi, fermentum malesuada diam scelerisque in. Curabitur at libero condimentum, fermentum diam vel, mollis ipsum. Duis congue sagittis vehicula. Praesent suscipit dapibus facilisis. Integer dolor arcu, condimentum sed enim ultrices, congue dictum nibh. Nullam a gravida lectus. Curabitur feugiat lorem arcu. Etiam sollicitudin massa in ligula lacinia tristique. Vestibulum lorem sem, vehicula a condimentum hendrerit, molestie ut ipsum.</p>
+            <p>Etiam placerat, ipsum nec egestas ultrices, nibh massa maximus justo, non mattis enim libero non neque. Aliquam sed consectetur mauris. Aliquam magna lorem, euismod at eros non, tincidunt elementum eros. Suspendisse potenti. Integer accumsan, lectus ut varius molestie, ex risus efficitur sem, ut porttitor nulla sapien id erat. Duis pharetra ac enim eu tristique. Donec porta rutrum accumsan. Quisque nec convallis odio. Phasellus commodo id mi in ullamcorper. Donec tincidunt condimentum commodo. Nulla suscipit elit at neque mattis hendrerit id sit amet eros. Sed placerat dolor a sem hendrerit ultricies. Mauris non vulputate metus. Ut turpis dui, mattis sed odio at, suscipit tempus nisi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;</p>
+        </div>
 
     </div>
-
-    <script type="text/javascript">
-    // create an array with nodes
-    var nodes = new vis.DataSet([
-        {id: 1, label: 'Node 1'},
-        {id: 2, label: 'Node 2'},
-        {id: 3, label: 'Node 3'},
-        {id: 4, label: 'Node 4'},
-        {id: 5, label: 'Node 5'}
-    ]);
-
-    // create an array with edges
-    var edges = new vis.DataSet([
-        {from: 1, to: 3},
-        {from: 1, to: 2},
-        {from: 2, to: 4},
-        {from: 2, to: 5}
-    ]);
-
-    // create a network
-    var container = document.getElementById('mynetwork');
-
-    // provide the data in the vis format
-    var data = {
-        nodes: nodes,
-        edges: edges
-    };
-    var options = {
-      width: "300px",
-      height: "300px"
-    };
-
-    // initialize your network!
-    var network = new vis.Network(container, data, options);
-
-    function onNodeClicked(obj) {
-      network.focus(obj.nodes[0], {
-        scale: 1.2,
-        animation: {
-          duration: 1000,
-          easingFunction: "easeInOutCubic"
-        }
-      });
-    }
-
-    network.on("selectNode", onNodeClicked);
-</script>
 
 </div>
 
@@ -81,5 +56,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"
         integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4"
         crossorigin="anonymous"></script>
+<script type="text/javascript" src="assets/js/main.js"></script>
 </body>
 </html>
