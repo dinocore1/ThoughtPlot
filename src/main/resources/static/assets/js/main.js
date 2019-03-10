@@ -17,11 +17,10 @@ class ThoughtPlot {
       }
     );
 
-
     this.network.on("selectNode", this.onNodeClicked.bind(this));
 
     this.nodes.add([
-      { id: 1, label: 'Node 1' },
+      { id: 'Android', label: 'Android' },
       { id: 2, label: 'Node 2' },
       { id: 3, label: 'Node 3' },
       { id: 4, label: 'Node 4' },
@@ -30,22 +29,36 @@ class ThoughtPlot {
 
 
     this.edges.add([
-      { from: 1, to: 3 },
-      { from: 1, to: 2 },
+      { from: 'Android', to: 3 },
+      { from: 'Android', to: 2 },
       { from: 2, to: 4 },
       { from: 2, to: 5 }
     ]);
   }
 
   onNodeClicked(obj) {
-    this.network.focus(obj.nodes[0], {
+    var nodeId = obj.nodes[0];
+    this.network.focus(nodeId, {
       scale: 1.2,
       animation: {
         duration: 1000,
         easingFunction: "easeInOutCubic"
       }
     });
+    var nodeObj = this.nodes.get(nodeId);
+    this.loadNote(nodeObj.label);
   }
+
+  loadNote(id) {
+    if(id === undefined) {
+      id = '';
+    }
+    var url = "api/v1/note/" + encodeURI(id);
+    $.getJSON( url, function( data ) {
+      $('#note').html(data.html);
+    });
+  }
+
 };
 
 var thoughtPlot;

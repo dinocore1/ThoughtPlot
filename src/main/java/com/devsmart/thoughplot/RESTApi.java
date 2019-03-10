@@ -62,6 +62,7 @@ public class RESTApi {
         // You can re-use parser and renderer instances
         Node document = parser.parse(note.markdown);
         String html = renderer.render(document);
+        html = String.format("<h1>%s</h1>\n", note.name) + html;
         retval.put("html", html);
     }
 
