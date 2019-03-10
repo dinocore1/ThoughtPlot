@@ -18,4 +18,14 @@ public class ThoughPlotApp {
     public File getRootDir() {
         return new File("thoughts");
     }
+
+    @Bean
+    public String getDefaultNote() {
+        return "index";
+    }
+
+    @Bean
+    public NoteDB getNoteDB() {
+        return new FileSystemNoteDB(getRootDir());
+    }
 }
