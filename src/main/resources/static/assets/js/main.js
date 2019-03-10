@@ -56,7 +56,13 @@ class ThoughtPlot {
     var url = "api/v1/note/" + encodeURI(id);
     $.getJSON( url, function( data ) {
       $('#note').html(data.html);
+      //history.pushState(null, id, "/?" + encodeURI(id));
     });
+  }
+
+  getUrlParam() {
+    var retval = window.location.search.substring(1);
+    return decodeURI(retval);
   }
 
 };
@@ -65,5 +71,6 @@ var thoughtPlot;
 
 $(document).ready(function() {
   thoughtPlot = new ThoughtPlot();
-  thoughtPlot.loadNote();
+  var noteId = thoughtPlot.getUrlParam();
+  thoughtPlot.loadNote(noteId);
 });
