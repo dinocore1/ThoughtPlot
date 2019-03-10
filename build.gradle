@@ -49,6 +49,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
     dev "org.springframework.boot:spring-boot-devtools"
     implementation 'com.google.guava:guava:27.0.1-jre'
+    implementation 'com.vladsch.flexmark:flexmark-all:0.40.22'
 
 
     testImplementation 'junit:junit:4.12'
