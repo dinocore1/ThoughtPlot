@@ -13,7 +13,7 @@
     <script type="text/javascript" src="assets/js/visjs/vis.js"></script>
     <link type="text/css" href="assets/css/visjs/vis.css" rel="stylesheet" />
 
-    <title>ThoughPlot</title>
+    <title>ThoughtPlot</title>
 </head>
 <body>
 
@@ -35,21 +35,20 @@
 
 <div id="content" class="container">
 
-    <div class="row">
+    <div id="noteRow">
 
-        <div id="note" class="col"></div>
-
-        <div class="card bg-light mb-3" style="width: 18rem;">
+        <div class="card bg-light float-lg-right m-3">
             <div class="card-header">Network</div>
             <div class="card-img-bottom">
                 <div id="notegraph"></div>
             </div>
         </div>
-        
+
+        <div id="note"></div>
 
     </div>
 
-    <div class="row">
+    <div id="editorRow" class="row">
         <textarea id="editor" class="form-control" rows="75"></textarea>
     </div>
 

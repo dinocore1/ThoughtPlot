@@ -6,6 +6,8 @@ function isEmpty(str) {
 class ThoughtPlot {
 
   currentNote;
+  noteDiv;
+  editorDiv;
 
   constructor() {
     this.nodes = new vis.DataSet();
@@ -17,11 +19,17 @@ class ThoughtPlot {
         edges: this.edges
       },
       {
+        width: '100%',
+        height: '100%',
         layout: {
           randomSeed: 1
         }
       }
     );
+
+    this.noteDiv = $('#noteRow');
+    this.editorDiv = $('#editorRow');
+    this.editorDiv.hide();
 
     this.network.on("selectNode", this.onNodeClicked.bind(this));
     window.addEventListener("hashchange", this.onHashChange.bind(this), true);
@@ -99,6 +107,16 @@ class ThoughtPlot {
   getUrlParam() {
     var retval = window.location.hash.substring(1);
     return decodeURI(retval);
+  }
+
+  setEditMode(edit) {
+    if(edit) {
+      this.noteDiv.hide();
+      this.editorDiv.show();
+    } else {
+      this.noteDiv.show();
+      this.editorDiv.hide();
+    }
   }
 
 };
