@@ -1,7 +1,6 @@
 package com.devsmart.thoughplot;
 
-import com.vladsch.flexmark.ast.AutoLink;
-import com.vladsch.flexmark.ast.LinkRef;
+import com.google.common.collect.Sets;
 import com.vladsch.flexmark.ext.wikilink.WikiLink;
 import com.vladsch.flexmark.ext.wikilink.WikiLinkExtension;
 import com.vladsch.flexmark.html.AttributeProvider;
@@ -10,27 +9,54 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.html.IndependentAttributeProviderFactory;
 import com.vladsch.flexmark.html.renderer.AttributablePart;
 import com.vladsch.flexmark.html.renderer.LinkResolverContext;
-import com.vladsch.flexmark.html.renderer.NodeRendererContext;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.*;
 import com.vladsch.flexmark.util.html.Attributes;
 import com.vladsch.flexmark.util.options.MutableDataHolder;
 import com.vladsch.flexmark.util.options.MutableDataSet;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.AsSubgraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.traverse.BreadthFirstIterator;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Set;
+import java.util.TreeMap;
 
+//@Component
+//@Scope(WebApplicationContext.SCOPE_SESSION)
+//@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class ViewEngine {
 
     private final Parser mMarkdownParser;
     private HtmlRenderer mHtmlRenderer;
 
-    private static NodeVisitor createLinkRefVisitor(Collection<String> linkRefs) {
+    Graph<Note, DefaultEdge> mGraph = GraphTypeBuilder.<Note, DefaultEdge>undirected()
+            .allowingSelfLoops(false)
+            .allowingMultipleEdges(false)
+            .weighted(false)
+            .edgeClass(DefaultEdge.class)
+            .buildGraph();
+
+    private TreeMap<String, Note> mNoteIndex = new TreeMap<String, Note>();
+
+    private NodeVisitor createLinkRefVisitor(Note rootNote) {
         return new NodeVisitor(new VisitHandler<WikiLink>(WikiLink.class, new Visitor<WikiLink>(){
             @Override
             public void visit(WikiLink node) {
                 String linkRefName = node.getPageRef().toLowerCase().toString();
-                linkRefs.add(linkRefName);
+                Note n = mNoteIndex.get(linkRefName);
+                if(n == null) {
+                    n = new Note(linkRefName);
+                    mGraph.addVertex(n);
+                    mGraph.addEdge(rootNote, n);
+                    mNoteIndex.put(linkRefName, n);
+                }
             }
         }));
     }
@@ -86,13 +112,34 @@ public class ViewEngine {
     }
 
 
-    public void addNote(Note note) {
-        processNote(note);
+    public Note loadMarkdown(String name, String markdown) {
+        Note n = mNoteIndex.get(name);
+        if(n == null) {
+            n = new Note(name);
+            mNoteIndex.put(name, n);
+            mGraph.addVertex(n);
+        }
+
+        n.markdown = markdown;
+        Document document = mMarkdownParser.parse(markdown);
+        createLinkRefVisitor(n).visit(document);
+        n.html = mHtmlRenderer.render(document);
+        return n;
     }
 
-    public void processNote(Note note) {
-        Document document = mMarkdownParser.parse(note.markdown);
-        createLinkRefVisitor(note.linkRefs).visit(document);
-        note.html = mHtmlRenderer.render(document);
+    public Graph<Note, DefaultEdge> getNeighbors(String name, int max) {
+        Note n = mNoteIndex.get(name);
+        if(n != null) {
+            BreadthFirstIterator<Note, DefaultEdge> bfs = new BreadthFirstIterator<>(mGraph, n);
+            Set<Note> verticies = Sets.newHashSet();
+            while(bfs.hasNext() && verticies.size() < max) {
+                verticies.add(bfs.next());
+            }
+
+            return new AsSubgraph<>(mGraph, verticies);
+        }
+
+        return null;
     }
+
 }

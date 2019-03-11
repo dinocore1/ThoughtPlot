@@ -19,21 +19,6 @@ class ThoughtPlot {
 
     this.network.on("selectNode", this.onNodeClicked.bind(this));
 
-    this.nodes.add([
-      { id: 'Android', label: 'Android' },
-      { id: 2, label: 'Node 2' },
-      { id: 3, label: 'Node 3' },
-      { id: 4, label: 'Node 4' },
-      { id: 5, label: 'Node 5' }
-    ]);
-
-
-    this.edges.add([
-      { from: 'Android', to: 3 },
-      { from: 'Android', to: 2 },
-      { from: 2, to: 4 },
-      { from: 2, to: 5 }
-    ]);
   }
 
   onNodeClicked(obj) {
@@ -50,12 +35,18 @@ class ThoughtPlot {
   }
 
   loadNote(id) {
+    var caller = this;
     if(id === undefined) {
       id = '';
     }
     var url = "api/v1/note/" + encodeURI(id);
     $.getJSON( url, function( data ) {
       $('#note').html(data.html);
+      //caller.nodes.clear();
+      //caller.edges.clear();
+
+      caller.nodes.update(data.graph.nodes);
+      caller.edges.update(data.graph.edges);
       //history.pushState(null, id, "/?" + encodeURI(id));
     });
   }

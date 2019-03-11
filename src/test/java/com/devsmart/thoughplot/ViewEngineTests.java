@@ -8,12 +8,11 @@ public class ViewEngineTests {
 
     @Test
     public void testLinkVisitor() {
-        Note note = new Note();
-        note.markdown = "this doc contains links to [[google]]";
+
 
         ViewEngine engine = new ViewEngine();
-        engine.processNote(note);
+        Note n = engine.loadMarkdown("test", "this doc contains links to [[google]]");
 
-        assertEquals(1, note.linkRefs.size());
+
     }
 }

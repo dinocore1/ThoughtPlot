@@ -49,6 +49,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
     dev "org.springframework.boot:spring-boot-devtools"
     implementation 'com.google.guava:guava:27.0.1-jre'
+    implementation 'org.jgrapht:jgrapht-core:1.3.0'
+    implementation 'org.jgrapht:jgrapht-ext:1.3.0'
     implementation 'com.vladsch.flexmark:flexmark-all:0.40.22'
 
 

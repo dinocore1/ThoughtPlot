@@ -1,10 +1,9 @@
 package com.devsmart.thoughplot;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.common.collect.Maps;
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.options.MutableDataSet;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @RestController()
@@ -27,6 +28,9 @@ public class RESTApi {
     @Autowired
     String defaultNote;
 
+    @Autowired
+    ViewEngine viewEngine;
+
     @RequestMapping(value = "note/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Object> getNote(HttpServletResponse response, @PathVariable("id") String id) {
@@ -35,8 +39,21 @@ public class RESTApi {
                 id = defaultNote;
             }
             Note note = noteDB.getNote(id);
+            if(note == null) {
+                response.setStatus(404);
+                return null;
+            }
+
+            note = viewEngine.loadMarkdown(id, note.markdown);
             HashMap<String, Object> retval = Maps.newHashMap();
-            processMarkdown(note, retval);
+
+            retval.put("markdown", note.markdown);
+
+            String html = String.format("<h1>%s</h1>\n", note.name) + note.html;
+            retval.put("html", html);
+
+            addGraph(retval, viewEngine.getNeighbors(id, 17));
+
             return retval;
 
         } catch (Exception e) {
@@ -47,23 +64,45 @@ public class RESTApi {
 
     }
 
-    private void processMarkdown(Note note, HashMap<String, Object> retval) {
-        MutableDataSet options = new MutableDataSet();
 
-        // uncomment to set optional extensions
-        //options.set(Parser.EXTENSIONS, Arrays.asList(TablesExtension.create(), StrikethroughExtension.create()));
+    private static class JsonGraphNode {
+        public String id;
+        public String label;
 
-        // uncomment to convert soft-breaks to hard breaks
-        //options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
+        public JsonGraphNode(String name) {
+            this.id = name;
+            this.label = name;
+        }
+    }
 
-        Parser parser = Parser.builder(options).build();
-        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
+    public static class JsonGraphEdge {
+        public String id;
+        public String from;
+        public String to;
 
-        // You can re-use parser and renderer instances
-        Node document = parser.parse(note.markdown);
-        String html = renderer.render(document);
-        html = String.format("<h1>%s</h1>\n", note.name) + html;
-        retval.put("html", html);
+        public JsonGraphEdge(String from, String to) {
+            this.from = from;
+            this.to = to;
+            this.id = String.format("%s-%s", from, to);
+        }
+    }
+
+    private static void addGraph(HashMap<String, Object> retval, Graph<Note, DefaultEdge> graph) {
+
+        Map<String, Object> graphObj = Maps.newHashMap();
+        retval.put("graph", graphObj);
+        List<JsonGraphNode> nodes = new LinkedList<>();
+        graphObj.put("nodes", nodes);
+        for(Note n : graph.vertexSet()) {
+            nodes.add(new JsonGraphNode(n.name));
+        }
+
+        List<JsonGraphEdge> edges = new LinkedList<>();
+        graphObj.put("edges", edges);
+        for(DefaultEdge e : graph.edgeSet()) {
+            edges.add(new JsonGraphEdge( graph.getEdgeSource(e).name, graph.getEdgeTarget(e).name ));
+        }
+
     }
 
 }

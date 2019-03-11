@@ -28,8 +28,7 @@ public class FileSystemNoteDB implements NoteDB {
                 Matcher m = REGEX.matcher(filename);
                 if(m.find()) {
                     if(m.group(1).equalsIgnoreCase(id)) {
-                        retval = new Note();
-                        retval.name = id;
+                        retval = new Note(id);
                         retval.markdown = Files.asByteSource(f).asCharSource(Charsets.UTF_8).read();
                         break;
                     }
