@@ -40,6 +40,8 @@ sassCompile {
     outputDir = file("$projectDir/src/main/resources/static/assets/css")
 }
 
+compileJava.dependsOn(sassCompile)
+
 configurations {
     dev
 }

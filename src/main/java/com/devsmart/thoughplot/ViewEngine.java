@@ -54,9 +54,9 @@ public class ViewEngine {
                 if(n == null) {
                     n = new Note(linkRefName);
                     mGraph.addVertex(n);
-                    mGraph.addEdge(rootNote, n);
                     mNoteIndex.put(linkRefName, n);
                 }
+                mGraph.addEdge(rootNote, n);
             }
         }));
     }
