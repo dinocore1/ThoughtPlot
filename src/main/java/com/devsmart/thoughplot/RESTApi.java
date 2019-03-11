@@ -83,7 +83,14 @@ public class RESTApi {
         public JsonGraphEdge(String from, String to) {
             this.from = from;
             this.to = to;
-            this.id = String.format("%s-%s", from, to);
+
+            /* Let's sort the two node names alphabetically to ensure uniqueness */
+            if(from.compareTo(to) < 0) {
+                this.id = String.format("%s-%s", from, to);
+            } else {
+                this.id = String.format("%s-%s", to, from);
+            }
+
         }
     }
 
