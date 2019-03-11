@@ -23,11 +23,6 @@ public class ThoughPlotApp {
     }
 
     @Bean
-    public String getDefaultNote() {
-        return "index";
-    }
-
-    @Bean
     public NoteDB getNoteDB() {
         return new FileSystemNoteDB(getRootDir());
     }

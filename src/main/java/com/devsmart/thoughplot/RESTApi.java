@@ -26,18 +26,19 @@ public class RESTApi {
     NoteDB noteDB;
 
     @Autowired
-    String defaultNote;
-
-    @Autowired
     ViewEngine viewEngine;
+
+    public static class NoteData {
+        public String id;
+        public String markdown;
+        public String html;
+        public Map<String, Object> graph;
+    }
 
     @RequestMapping(value = "note/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Map<String, Object> getNote(HttpServletResponse response, @PathVariable("id") String id) {
+    public NoteData getNote(HttpServletResponse response, @PathVariable("id") String id) {
         try {
-            if(id == null) {
-                id = defaultNote;
-            }
             Note note = noteDB.getNote(id);
             if(note == null) {
                 response.setStatus(404);
@@ -45,12 +46,10 @@ public class RESTApi {
             }
 
             note = viewEngine.loadMarkdown(id, note.markdown);
-            HashMap<String, Object> retval = Maps.newHashMap();
-
-            retval.put("markdown", note.markdown);
-
-            String html = String.format("<h1>%s</h1>\n", note.name) + note.html;
-            retval.put("html", html);
+            NoteData retval = new NoteData();
+            retval.id = id;
+            retval.markdown = note.markdown;
+            retval.html = String.format("<h1>%s</h1>\n", note.name) + note.html;
 
             addGraph(retval, viewEngine.getNeighbors(id, 17));
 
@@ -94,18 +93,18 @@ public class RESTApi {
         }
     }
 
-    private static void addGraph(HashMap<String, Object> retval, Graph<Note, DefaultEdge> graph) {
+    private static void addGraph(NoteData retval, Graph<Note, DefaultEdge> graph) {
 
-        Map<String, Object> graphObj = Maps.newHashMap();
-        retval.put("graph", graphObj);
+        retval.graph = Maps.newHashMap();
+
         List<JsonGraphNode> nodes = new LinkedList<>();
-        graphObj.put("nodes", nodes);
+        retval.graph.put("nodes", nodes);
         for(Note n : graph.vertexSet()) {
             nodes.add(new JsonGraphNode(n.name));
         }
 
         List<JsonGraphEdge> edges = new LinkedList<>();
-        graphObj.put("edges", edges);
+        retval.graph.put("edges", edges);
         for(DefaultEdge e : graph.edgeSet()) {
             edges.add(new JsonGraphEdge( graph.getEdgeSource(e).name, graph.getEdgeTarget(e).name ));
         }

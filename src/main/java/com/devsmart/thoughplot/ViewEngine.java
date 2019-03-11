@@ -83,7 +83,7 @@ public class ViewEngine {
         public void setAttributes(final Node node, final AttributablePart part, final Attributes attributes) {
             if (node instanceof WikiLink && part == AttributablePart.LINK) {
                 WikiLink wikiNode = (WikiLink) node;
-                attributes.replaceValue("href", "?" + wikiNode.getLink().toLowerCase().toString());
+                attributes.replaceValue("href", "#" + wikiNode.getLink().toLowerCase().toString());
                 //attributes.replaceValue("class", "my-autolink-class");
 
             }
