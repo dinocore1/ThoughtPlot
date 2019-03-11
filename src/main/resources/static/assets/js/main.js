@@ -10,6 +10,7 @@ class ThoughtPlot {
   editorDiv;
 
   constructor() {
+    this.isEditMode = false;
     this.nodes = new vis.DataSet();
     this.edges = new vis.DataSet();
     this.network = new vis.Network(
@@ -85,21 +86,14 @@ class ThoughtPlot {
     $.getJSON(url, function (data) {
       caller.currentNote = data;
       $('#note').html(data.html);
-      //caller.nodes.clear();
-      //caller.edges.clear();
+      $('#editor').val(data.markdown);
 
       caller.nodes.update(data.graph.nodes);
       caller.edges.update(data.graph.edges);
 
-      /*
-      caller.network.focus(id, {
-        scale: 1.2,
-        animation: {
-          duration: 1000,
-          easingFunction: "easeInOutCubic"
-        }
+      $('.tp-edit').click(function() {
+        thoughtPlot.toggleEdit();
       });
-      */
 
       window.location.hash = '#' + encodeURI(id);
     });
@@ -120,6 +114,10 @@ class ThoughtPlot {
     }
   }
 
+  toggleEdit() {
+    this.setEditMode(!this.isEditMode);
+  }
+
 };
 
 var thoughtPlot;
@@ -128,6 +126,4 @@ $(document).ready(function () {
   thoughtPlot = new ThoughtPlot();
   var noteId = thoughtPlot.getUrlParam();
   thoughtPlot.loadNote(noteId);
-
-  
 });

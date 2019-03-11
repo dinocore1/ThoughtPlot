@@ -50,7 +50,7 @@ public class RESTApi {
             NoteData retval = new NoteData();
             retval.id = id;
             retval.markdown = note.markdown;
-            retval.html = String.format("<h1>%s</h1>\n", StringUtils.capitalize(note.name)) + note.html;
+            retval.html = String.format("<h1>%s</h1>\n<a href=\"#\" class=\"tp-edit\">Edit</a>", StringUtils.capitalize(note.name)) + note.html;
 
             addGraph(retval, viewEngine.getNeighbors(id, 17));
 
