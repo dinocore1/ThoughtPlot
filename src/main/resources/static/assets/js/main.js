@@ -19,8 +19,9 @@ class ThoughtPlot {
         edges: this.edges
       },
       {
+        autoResize: true,
         width: '100%',
-        height: '100%',
+        height: '300px',
         layout: {
           randomSeed: 1
         }

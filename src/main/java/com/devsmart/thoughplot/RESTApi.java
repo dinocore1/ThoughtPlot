@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -49,7 +50,7 @@ public class RESTApi {
             NoteData retval = new NoteData();
             retval.id = id;
             retval.markdown = note.markdown;
-            retval.html = String.format("<h1>%s</h1>\n", note.name) + note.html;
+            retval.html = String.format("<h1>%s</h1>\n", StringUtils.capitalize(note.name)) + note.html;
 
             addGraph(retval, viewEngine.getNeighbors(id, 17));
 
