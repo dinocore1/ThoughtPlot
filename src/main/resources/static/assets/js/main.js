@@ -109,19 +109,18 @@ class ThoughtPlot {
 
     var url = "/api/v1/note/" + encodeURI(this.currentNote.id) + "/markdown";
 
-    var onSuccess = () => {
+    var onSuccess = (stuff) => {
       this.toggleEdit();
       this.loadNote(this.currentNote.id);
     };
 
-    var jqxhr = $.ajax(url, {
+    var jqxhr = $.ajax({
+      url: url,
       method: 'POST',
       data: this.currentNote.markdown,
-      dataType: 'json',
-      contentType: 'application/json'
+      contentType: 'application/json',
+      success: onSuccess
     });
-
-    jqxhr.done(onSuccess);
     
   }
 
@@ -138,6 +137,7 @@ class ThoughtPlot {
       this.noteDiv.show();
       this.editorDiv.hide();
     }
+    this.isEditMode = edit;
   }
 
   toggleEdit() {
