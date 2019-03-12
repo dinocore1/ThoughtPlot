@@ -5,11 +5,14 @@ function isEmpty(str) {
 
 class ThoughtPlot {
 
+  //status can be: idle, loading
+  loadStatus;
   currentNote;
   noteDiv;
   editorDiv;
 
   constructor() {
+    this.loadStatus = 'idle';
     this.isEditMode = false;
     this.nodes = new vis.DataSet();
     this.edges = new vis.DataSet();
@@ -33,22 +36,23 @@ class ThoughtPlot {
     this.editorDiv = $('#editorRow');
     this.editorDiv.hide();
 
-    this.network.on("selectNode", this.onNodeClicked.bind(this));
-    window.addEventListener("hashchange", this.onHashChange.bind(this), true);
+    $('#editSave').click((event) => {
+      event.preventDefault();
+      this.saveMarkdown($('#editor').val());
+    });
 
-  }
+    this.network.on('selectNode', (obj) => {
+      var id = obj.nodes[0];
+      window.location.hash = '#' + encodeURI(id);
+    });
 
-  onHashChange(event) {
-    var noteId = this.getUrlParam();
-    if(this.getCurrentNoteId() != noteId) {
+    this.onHashChange = () => {
+      var noteId = this.getUrlParam();
       this.loadNote(noteId);
     }
-  }
 
-  onNodeClicked(obj) {
-    var nodeId = obj.nodes[0];
-    var nodeObj = this.nodes.get(nodeId);
-    this.loadNote(nodeObj.label);
+    window.addEventListener('hashchange', this.onHashChange);
+
   }
 
   getCurrentNoteId() {
@@ -60,18 +64,8 @@ class ThoughtPlot {
   }
 
   loadNote(id) {
-    var caller = this;
-
     if (isEmpty(id)) {
       id = 'index';
-    }
-
-    if(this.currentNote && this.currentNote.id == id){
-      return;
-    } else {
-      this.currentNote = {
-        id: id
-      };
     }
 
     this.network.focus(id, {
@@ -82,21 +76,53 @@ class ThoughtPlot {
       }
     });
 
-    var url = "api/v1/note/" + encodeURI(id);
-    $.getJSON(url, function (data) {
-      caller.currentNote = data;
+    var onSuccess = (data) => {
+      this.currentNote = data;
       $('#note').html(data.html);
       $('#editor').val(data.markdown);
 
-      caller.nodes.update(data.graph.nodes);
-      caller.edges.update(data.graph.edges);
+      this.nodes.update(data.graph.nodes);
+      this.edges.update(data.graph.edges);
 
-      $('.tp-edit').click(function() {
+      $('.tp-edit').click(function(event) {
+        event.preventDefault();
         thoughtPlot.toggleEdit();
       });
 
+      window.removeEventListener('hashchange', this.onHashChange);
       window.location.hash = '#' + encodeURI(id);
+      window.addEventListener('hashchange', this.onHashChange);
+    };
+
+    var onFinish = function() {
+      status = 'idle';
+    };
+
+    var url = "api/v1/note/" + encodeURI(id);
+    var jqxhr = $.getJSON(url);
+    jqxhr.done(onSuccess);
+    jqxhr.always(onFinish);
+  }
+
+  saveMarkdown(markdown) {
+    this.currentNote.markdown = markdown;
+
+    var url = "/api/v1/note/" + encodeURI(this.currentNote.id) + "/markdown";
+
+    var onSuccess = () => {
+      this.toggleEdit();
+      this.loadNote(this.currentNote.id);
+    };
+
+    var jqxhr = $.ajax(url, {
+      method: 'POST',
+      data: this.currentNote.markdown,
+      dataType: 'json',
+      contentType: 'application/json'
     });
+
+    jqxhr.done(onSuccess);
+    
   }
 
   getUrlParam() {

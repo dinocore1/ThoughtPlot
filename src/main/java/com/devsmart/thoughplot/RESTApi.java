@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,6 +63,16 @@ public class RESTApi {
             return null;
         }
 
+    }
+
+    @RequestMapping(value = "note/{id}/markdown", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void setNoteMarkdown(@PathVariable("id") String id, @RequestBody String markdown) throws IOException {
+        Note note = noteDB.getNote(id);
+        if(note == null) {
+            note = new Note(id);
+        }
+        note.markdown = markdown;
+        noteDB.save(note);
     }
 
 

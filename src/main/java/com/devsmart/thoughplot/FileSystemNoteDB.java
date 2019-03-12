@@ -1,6 +1,7 @@
 package com.devsmart.thoughplot;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 
 import java.io.File;
@@ -36,5 +37,12 @@ public class FileSystemNoteDB implements NoteDB {
             }
         }
         return retval;
+    }
+
+    @Override
+    public void save(Note note) throws IOException {
+        File f = new File(rootDir, String.format("%s.md", note.name));
+        Files.asByteSink(f).asCharSink(Charsets.UTF_8).write(note.markdown);
+
     }
 }
