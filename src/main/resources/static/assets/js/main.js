@@ -94,14 +94,27 @@ class ThoughtPlot {
       window.addEventListener('hashchange', this.onHashChange);
     };
 
-    var onFinish = function() {
-      status = 'idle';
+    var onError = (jqxhr) => {
+      if(jqxhr.status == 404) {
+        this.currentNote = {
+          id: id,
+          html: '',
+          markdown: ''
+        };
+        $('#note').html(this.currentNote.html);
+        $('#editor').val(this.currentNote.markdown);
+        this.setEditMode(true);
+      }
     };
 
     var url = "api/v1/note/" + encodeURI(id);
-    var jqxhr = $.getJSON(url);
-    jqxhr.done(onSuccess);
-    jqxhr.always(onFinish);
+    $.ajax({
+      url: url,
+      method: 'GET',
+      dataType: 'json',
+      success: onSuccess,
+      error: onError
+    });
   }
 
   saveMarkdown(markdown) {
