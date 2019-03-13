@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class FileSystemNoteDB implements NoteDB {
 
-    public static final Pattern REGEX = Pattern.compile("([[a-zA-Z_0-9] ]+).md$");
+    public static final Pattern REGEX = Pattern.compile("([[a-zA-Z_0-9] \\-]+).md$");
 
     private final File rootDir;
 

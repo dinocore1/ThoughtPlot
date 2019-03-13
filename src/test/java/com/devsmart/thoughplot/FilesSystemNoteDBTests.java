@@ -10,8 +10,8 @@ public class FilesSystemNoteDBTests {
 
     @Test
     public void testValidFilename() {
-        Matcher m = FileSystemNoteDB.REGEX.matcher("android.md");
+        Matcher m = FileSystemNoteDB.REGEX.matcher("docker-compose.md");
         assertTrue(m.find());
-        assertEquals("android", m.group(1));
+        assertEquals("docker-compose", m.group(1));
     }
 }
