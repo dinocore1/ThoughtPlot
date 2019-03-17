@@ -90,6 +90,10 @@ class ThoughtPlot {
         thoughtPlot.toggleEdit();
       });
 
+      $('pre code').each((idx, block) => {
+        hljs.highlightBlock(block);
+      });
+
       window.removeEventListener('hashchange', this.onHashChange);
       window.location.hash = '#' + encodeURI(id);
       window.addEventListener('hashchange', this.onHashChange);
