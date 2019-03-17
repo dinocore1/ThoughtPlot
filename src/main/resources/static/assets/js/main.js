@@ -83,6 +83,7 @@ class ThoughtPlot {
 
       this.nodes.update(data.graph.nodes);
       this.edges.update(data.graph.edges);
+      this.network.selectNodes([id], false);
 
       $('.tp-edit').click(function(event) {
         event.preventDefault();
