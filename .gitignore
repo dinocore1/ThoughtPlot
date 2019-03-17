@@ -4,3 +4,4 @@ out/
 *.iml
 .gradle/
 src/main/resources/static/assets/css/bootstrap
+src/main/resources/static/assets/css/main.css*
