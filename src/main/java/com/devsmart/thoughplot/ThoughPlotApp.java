@@ -52,9 +52,11 @@ public class ThoughPlotApp {
         if(!StringUtils.isEmptyOrNull(gitUrl)) {
             try {
                 git = Git.open(rootDir);
+                LOGGER.info("git pull {}", gitUrl);
                 git.pull().call();
             } catch (RepositoryNotFoundException e) {
-                LOGGER.error("no repo found in: {}", rootDir.getAbsolutePath());
+                LOGGER.error("no git repo found in: {}", rootDir.getAbsolutePath());
+                LOGGER.info("git cloning repo {} into {}", gitUrl, rootDir.getAbsolutePath());
                 git = Git.cloneRepository()
                         .setURI(gitUrl)
                         .setDirectory(rootDir)
