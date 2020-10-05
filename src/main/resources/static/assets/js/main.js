@@ -81,6 +81,8 @@ class ThoughtPlot {
       $('#note').html(data.html);
       $('#editor').val(data.markdown);
 
+      MathJax.typeset();
+
       this.nodes.update(data.graph.nodes);
       this.edges.update(data.graph.edges);
       this.network.selectNodes([id], false);
